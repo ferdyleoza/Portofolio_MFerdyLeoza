@@ -1,7 +1,7 @@
 "use client";
 "use strict";
 
-import React from "react";
+import React, { useState } from "react";
 import { Mail, ArrowUp, Send } from "lucide-react";
 
 const GithubIcon = (props) => (
@@ -36,8 +36,59 @@ const LinkedinIcon = (props) => (
 );
 
 export default function Footer() {
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    message: ""
+  });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitStatus, setSubmitStatus] = useState(null);
+
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  const handleChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value
+    });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    setSubmitStatus(null);
+
+    try {
+      const response = await fetch("https://api.web3forms.com/submit", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json"
+        },
+        body: JSON.stringify({
+          access_key: process.env.NEXT_PUBLIC_WEB3FORMS_ACCESS_KEY,
+          from_name: formData.name || "Pengunjung Portofolio",
+          subject: `[Portofolio] Pesan Baru dari ${formData.name || "Pengunjung"}`,
+          name: formData.name,
+          email: formData.email,
+          message: formData.message
+        })
+      });
+
+      const result = await response.json();
+      if (result.success) {
+        setSubmitStatus("success");
+        setFormData({ name: "", email: "", message: "" });
+      } else {
+        setSubmitStatus("error");
+      }
+    } catch (error) {
+      setSubmitStatus("error");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -72,36 +123,61 @@ export default function Footer() {
 
           {/* Contact Form */}
           <div className="lg:col-span-6">
-            <form onSubmit={(e) => e.preventDefault()} className="space-y-4">
+            <form onSubmit={handleSubmit} className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <input
                   type="text"
+                  name="name"
+                  value={formData.name}
+                  onChange={handleChange}
                   placeholder="Nama Anda"
                   className="px-4 py-3 bg-zinc-900/60 border border-zinc-850 hover:border-zinc-800 focus:border-teal-400 focus:outline-none rounded-xl text-sm text-zinc-200 placeholder:text-zinc-550 transition-colors duration-200"
                   required
+                  disabled={isSubmitting}
                   suppressHydrationWarning
                 />
                 <input
                   type="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleChange}
                   placeholder="Email Anda"
                   className="px-4 py-3 bg-zinc-900/60 border border-zinc-850 hover:border-zinc-800 focus:border-teal-400 focus:outline-none rounded-xl text-sm text-zinc-200 placeholder:text-zinc-550 transition-colors duration-200"
                   required
+                  disabled={isSubmitting}
                   suppressHydrationWarning
                 />
               </div>
               <textarea
+                name="message"
+                value={formData.message}
+                onChange={handleChange}
                 placeholder="Pesan Anda..."
                 rows="4"
                 className="w-full px-4 py-3 bg-zinc-900/60 border border-zinc-850 hover:border-zinc-800 focus:border-teal-400 focus:outline-none rounded-xl text-sm text-zinc-200 placeholder:text-zinc-550 transition-colors duration-200 resize-none"
                 required
+                disabled={isSubmitting}
                 suppressHydrationWarning
               />
+
+              {submitStatus === "success" && (
+                <p className="text-teal-400 text-xs font-medium font-mono">
+                  ✓ Pesan berhasil terkirim! Terima kasih telah menghubungi saya.
+                </p>
+              )}
+              {submitStatus === "error" && (
+                <p className="text-red-400 text-xs font-medium font-mono">
+                  ✗ Gagal mengirim pesan. Silakan coba lagi atau hubungi langsung melalui email.
+                </p>
+              )}
+
               <button
                 type="submit"
-                className="w-full py-3 bg-white text-zinc-950 font-bold rounded-xl text-xs uppercase tracking-wider inline-flex items-center justify-center space-x-2 hover:bg-teal-400 hover:text-zinc-950 transition-all cursor-pointer"
+                disabled={isSubmitting}
+                className="w-full py-3 bg-white text-zinc-950 font-bold rounded-xl text-xs uppercase tracking-wider inline-flex items-center justify-center space-x-2 hover:bg-teal-400 hover:text-zinc-950 transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
                 suppressHydrationWarning
               >
-                <span>Kirim Pesan</span>
+                <span>{isSubmitting ? "Mengirim..." : "Kirim Pesan"}</span>
                 <Send className="w-3.5 h-3.5" />
               </button>
             </form>
