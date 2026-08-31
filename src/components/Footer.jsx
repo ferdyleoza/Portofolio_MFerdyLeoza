@@ -68,7 +68,7 @@ export default function Footer() {
           Accept: "application/json"
         },
         body: JSON.stringify({
-          access_key: process.env.NEXT_PUBLIC_WEB3FORMS_ACCESS_KEY,
+          access_key: "82dfcf49-3095-45f4-8170-bd093e4610c0",
           from_name: formData.name || "Pengunjung Portofolio",
           subject: `[Portofolio] Pesan Baru dari ${formData.name || "Pengunjung"}`,
           name: formData.name,
