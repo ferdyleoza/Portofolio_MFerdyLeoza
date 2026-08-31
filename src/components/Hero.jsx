@@ -85,7 +85,7 @@ export default function Hero() {
                   <div className="w-3 h-3 rounded-full bg-yellow-500/60" />
                   <div className="w-3 h-3 rounded-full bg-green-500/60" />
                 </div>
-                <div className="text-[10px] text-zinc-500 font-mono">ferdy.jpeg</div>
+                <div className="text-[10px] text-zinc-500 font-mono">Muhammad Ferdy Leoza</div>
               </div>
 
               {/* Profile Image Wrapper */}
@@ -96,15 +96,6 @@ export default function Hero() {
                     alt="Muhammad Ferdy Leoza"
                     className="w-full h-full object-cover object-center transform transition-transform duration-700 group-hover:scale-105"
                   />
-
-                  {/* Subtle Tech Overlay */}
-                  <div className="absolute bottom-3 left-3 right-3 px-3 py-2 rounded-xl bg-zinc-950/80 backdrop-blur-md border border-zinc-800 text-[10px] text-zinc-400 font-mono flex items-center justify-between">
-                    <span>STATUS: ACTIVE</span>
-                    <span className="text-teal-400 flex items-center gap-1">
-                      <span className="w-1.5 h-1.5 rounded-full bg-teal-400 animate-pulse" />
-                      ONLINE
-                    </span>
-                  </div>
                 </div>
               </div>
 
